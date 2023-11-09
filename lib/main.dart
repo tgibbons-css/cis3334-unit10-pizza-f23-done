@@ -37,25 +37,36 @@ class _MyHomePageState extends State<MyHomePage> {
       showDialog<String>(
           context: context,
           builder: (BuildContext context) =>
-              Dialog(
-                  child:Column(
+             Dialog(
+                child:Column(
                     children: [
                       Text("Order your pizza"),
                       TextField(controller: pizzaToppings ),
-                      DropdownButton(
-                          style: Theme.of(context).textTheme.headline4,
-                          value: sizeSelected,
-                          items:[
-                            DropdownMenuItem(child: Text("Small"), value: 0),
-                            DropdownMenuItem(child: Text("Medium"), value: 1),
-                            DropdownMenuItem(child: Text("Large"), value: 2),
-                            DropdownMenuItem(child: Text("X-Lareg"), value: 3)
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              sizeSelected = value!;
-                            });
-                          }),
+                      StatefulBuilder(
+                        builder: (BuildContext context, StateSetter dropDownState) {
+                          return DropdownButton(
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .headline4,
+                            value: sizeSelected,
+                            items: [
+                              DropdownMenuItem(child: Text("Small"), value: 0),
+                              DropdownMenuItem(child: Text("Medium"), value: 1),
+                              DropdownMenuItem(child: Text("Large"), value: 2),
+                              DropdownMenuItem(child: Text("X-Lareg"), value: 3)
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                dropDownState(() {
+                                  sizeSelected = value!;
+                                  sizeSelected = value!;
+                                });
+                              });
+                            }
+                          );
+                        }
+                      ),
                   ElevatedButton(
                     child: Text("Place Pizza Order"),
                     onPressed: () {
@@ -83,7 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView.builder(
           itemCount: pizzasInOrder.length,
           itemBuilder: (BuildContext context, int position) {
-            return Text(pizzasInOrder[position].description);
+            return ListTile(
+                title: Text(pizzasInOrder[position].description),
+                leading: Icon(Icons.local_pizza),
+            );
           }
       ),
 
