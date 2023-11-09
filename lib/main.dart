@@ -28,9 +28,49 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  List<Pizza> pizzasInOrder = [];
+  final pizzaToppings = TextEditingController();
+  int sizeSelected = 1;
+
   void _addPizza() {
-    // TODO: display add pizza Dialog window
-    print("addPizza called");
+      print("addPizza called -- size = "+pizzasInOrder.length.toString());
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) =>
+              Dialog(
+                  child:Column(
+                    children: [
+                      Text("Order your pizza"),
+                      TextField(controller: pizzaToppings ),
+                      DropdownButton(
+                          style: Theme.of(context).textTheme.headline4,
+                          value: sizeSelected,
+                          items:[
+                            DropdownMenuItem(child: Text("Small"), value: 0),
+                            DropdownMenuItem(child: Text("Medium"), value: 1),
+                            DropdownMenuItem(child: Text("Large"), value: 2),
+                            DropdownMenuItem(child: Text("X-Lareg"), value: 3)
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              sizeSelected = value!;
+                            });
+                          }),
+                  ElevatedButton(
+                    child: Text("Place Pizza Order"),
+                    onPressed: () {
+                      setState(() {
+                        pizzasInOrder.add( Pizza(pizzaToppings.text,sizeSelected));
+                        Navigator.pop(context);
+                      });;
+                    }
+                    ),
+                    ],
+                  )
+              )
+      );
+
+
   }
 
   @override
@@ -39,12 +79,33 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Text("Display List of Pizza objects here"),
+
+      body: ListView.builder(
+          itemCount: pizzasInOrder.length,
+          itemBuilder: (BuildContext context, int position) {
+            return Text(pizzasInOrder[position].description);
+          }
+      ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _addPizza,
-        tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class Pizza {
+  String toppings = "";
+  String description = "";
+  double price = 0.0;
+  int size = 0;
+
+  final PIZZA_PRICES = [7.99, 9.99, 12.99, 14.99];
+  final PIZZA_SIZES = ["Small", "Medium", "Large", "X-Large"];
+
+  Pizza(String this.toppings, int this.size) {
+    price = PIZZA_PRICES[size];
+    description = PIZZA_SIZES[size] + " pizza with "+toppings;
   }
 }
